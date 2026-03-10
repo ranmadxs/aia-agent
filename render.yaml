@@ -1,0 +1,23 @@
+# Render Blueprint - AIA Agent (MQTT Worker)
+# https://render.com/docs/blueprint-spec
+
+services:
+  # Background Worker (MQTT Listener)
+  - type: worker
+    name: aia-mqtt-worker
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python mqtt_worker.py
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: MQTT_HOST
+        value: broker.mqttdashboard.com
+      - key: MQTT_PORT
+        value: "1883"
+      - key: MQTT_USERNAME
+        sync: false
+      - key: MQTT_PASSWORD
+        sync: false
+      - key: MQTT_TOPIC_OUT
+        value: yai-mqtt/YUS-0.2.8-COSTA/out
