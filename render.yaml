@@ -6,8 +6,8 @@ services:
   - type: worker
     name: aia-mqtt-worker
     runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python mqtt_worker.py
+    buildCommand: pip install poetry && poetry install
+    startCommand: poetry run mqtt-worker
     envVars:
       - key: MONGODB_URI
         sync: false

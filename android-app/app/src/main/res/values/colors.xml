@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#0F172A</color>
+    <color name="card">#1E293B</color>
+    <color name="normal">#4ADE80</color>
+    <color name="alerta">#FBBF24</color>
+    <color name="peligro">#EF4444</color>
+    <color name="agua">#3B82F6</color>
+</resources>

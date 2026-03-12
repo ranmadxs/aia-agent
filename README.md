@@ -1,6 +1,36 @@
-# AIA Agent - MQTT Worker
+# AIA Agent
 
-Worker que escucha la cola MQTT del sensor de estanque y guarda promedios en MongoDB.
+Agentes inteligentes para automatización.
+
+## Comandos
+
+```bash
+# Instalar dependencias
+poetry install
+
+# MQTT Worker - Escucha sensor de estanque y guarda en MongoDB
+poetry run mqtt-worker
+
+# WhatsApp Reader - Lee mensajes de un chat (http://localhost:5001)
+poetry run whatsapp-reader
+
+# WhatsApp Sender - Envía mensajes a números (http://localhost:5002)
+poetry run whatsapp-sender
+```
+
+## Workers disponibles
+
+| Comando | Descripción | Puerto |
+|---------|-------------|--------|
+| `poetry run mqtt-worker` | Escucha MQTT del sensor de estanque | - |
+| `poetry run whatsapp-reader` | Lee mensajes de WhatsApp | 5001 |
+| `poetry run whatsapp-sender` | Envía mensajes por WhatsApp | 5002 |
+
+---
+
+## MQTT Worker
+
+Escucha la cola MQTT del sensor de estanque y guarda promedios en MongoDB.
 
 ## Configuración
 
@@ -15,27 +45,25 @@ Variables de entorno requeridas:
 | `MQTT_PASSWORD` | Contraseña MQTT |
 | `MQTT_TOPIC_OUT` | Topic a escuchar |
 
+## Instalación
+
+```bash
+poetry install
+```
+
 ## Ejecución local
 
 ```bash
 # Crear .env con las variables
-pip install -r requirements.txt
-python mqtt_worker.py
-```
-
-## Ejecución con Gunicorn (producción)
-
-```bash
-pip install gunicorn
-gunicorn --worker-class=sync --workers=1 --bind=0.0.0.0:8000 mqtt_worker:main
+poetry run mqtt-worker
 ```
 
 ## Deploy en Render
 
 1. Crear "Background Worker"
 2. Conectar el repo
-3. Build: `pip install -r requirements.txt`
-4. Start: `python mqtt_worker.py`
+3. Build: `pip install poetry && poetry install`
+4. Start: `poetry run mqtt-worker`
 5. Configurar variables de entorno
 
 ## Funcionamiento

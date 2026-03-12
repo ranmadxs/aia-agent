@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="agua">#3B82F6</color>
+    <color name="alerta">#FBBF24</color>
+    <color name="background">#0F172A</color>
+    <color name="card">#1E293B</color>
+    <color name="normal">#4ADE80</color>
+    <color name="peligro">#EF4444</color>
+    <string name="app_name">AIA Agent - Estanque</string>
+    <style name="Theme.AiaAgent" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:colorPrimary">#3B82F6</item>
+    </style>
+</resources>

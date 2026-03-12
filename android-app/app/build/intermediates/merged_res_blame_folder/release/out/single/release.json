@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "cl.tomi.aiaagent.app-merged_res-43:/drawable_ic_launcher.xml.flat",
+        "source": "cl.tomi.aiaagent.app-main-44:/drawable/ic_launcher.xml"
+    },
+    {
+        "merged": "cl.tomi.aiaagent.app-merged_res-43:/drawable_ic_launcher_background.xml.flat",
+        "source": "cl.tomi.aiaagent.app-main-44:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "cl.tomi.aiaagent.app-merged_res-43:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "cl.tomi.aiaagent.app-main-44:/drawable/ic_launcher_foreground.xml"
+    }
+]

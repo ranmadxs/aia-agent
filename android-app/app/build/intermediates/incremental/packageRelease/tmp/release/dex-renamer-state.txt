@@ -1,0 +1,7 @@
+#Thu Mar 12 14:26:39 CLST 2026
+base.1=/Users/ranmadxs/trabajos/aia-agent/android-app/app/build/intermediates/dex/release/mergeDexRelease/classes2.dex
+path.1=classes2.dex
+base.0=/Users/ranmadxs/trabajos/aia-agent/android-app/app/build/intermediates/dex/release/mergeDexRelease/classes.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+path.0=classes.dex

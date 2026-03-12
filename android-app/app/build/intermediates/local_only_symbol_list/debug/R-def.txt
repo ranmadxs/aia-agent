@@ -1,0 +1,13 @@
+R_DEF: Internal format may change without notice
+local
+color agua
+color alerta
+color background
+color card
+color normal
+color peligro
+drawable ic_launcher
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+string app_name
+style Theme.AiaAgent
