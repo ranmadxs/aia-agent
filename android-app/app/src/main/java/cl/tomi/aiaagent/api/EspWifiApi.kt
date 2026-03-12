@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.net.Proxy
 import java.util.concurrent.TimeUnit
 
 /** IP del ESP en modo AP. Siempre 192.168.50.1:80 */
@@ -20,26 +21,36 @@ const val ESP_AP_BASE_URL = "http://192.168.50.1"
 /**
  * API HTTP del WebServer del ESP para configuración WiFi.
  * Solo se usa cuando el teléfono está en la red 192.168.50.x (ESP AP).
- * Usa bindProcessToNetwork para forzar la red WiFi y evitar datos móviles.
+ * Usa socketFactory de la red WiFi para evitar que use datos móviles.
  */
 object EspWifiApi {
 
-    private val client = OkHttpClient.Builder()
+    private val defaultClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(90, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    /** Red WiFi con IP en 192.168.50.x (ESP AP). */
-    private fun findEspNetwork(context: Context): android.net.Network? {
-        val cm = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return null
-        return cm.allNetworks.firstOrNull { network ->
+    /** Cliente enlazado a la red 192.168.50.x. Sin CHANGE_NETWORK_STATE. */
+    private fun clientForEspNetwork(context: Context): OkHttpClient {
+        val cm = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return defaultClient
+        @Suppress("DEPRECATION")
+        val espNetwork = cm.allNetworks.firstOrNull { network ->
             val caps = cm.getNetworkCapabilities(network) ?: return@firstOrNull false
             if (!caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return@firstOrNull false
             cm.getLinkProperties(network)?.linkAddresses?.any { addr ->
                 addr.address?.hostAddress?.startsWith("192.168.50.") == true
             } == true
         }
+        return espNetwork?.let { network ->
+            OkHttpClient.Builder()
+                .socketFactory(network.socketFactory)
+                .proxy(Proxy.NO_PROXY)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build()
+        } ?: defaultClient
     }
 
     data class WifiNetwork(
@@ -60,23 +71,6 @@ object EspWifiApi {
         val error: String?
     )
 
-    /** Ejecuta la petición. Si useBind=true, enlaza a la red 192.168.50.x. */
-    private fun executeRequest(context: Context, request: Request, useBind: Boolean = true): okhttp3.Response {
-        val espNetwork = if (useBind) findEspNetwork(context) else null
-        if (espNetwork != null) {
-            val cm = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-            val bound = cm?.bindProcessToNetwork(espNetwork) == true
-            AppLog.d("EspWifiApi", "Red ESP encontrada, bind=$bound")
-            try {
-                return client.newCall(request).execute()
-            } finally {
-                if (bound) cm?.bindProcessToNetwork(null)
-            }
-        }
-        AppLog.d("EspWifiApi", "Red 192.168.50.x no encontrada, usando ruta por defecto")
-        return client.newCall(request).execute()
-    }
-
     /** GET /api/wifi - Lista redes que el ESP puede ver. Reintenta 1 vez si falla por timeout. */
     suspend fun getNetworks(context: Context): Result<WifiResponse> = withContext(Dispatchers.IO) {
         val request = Request.Builder()
@@ -86,8 +80,8 @@ object EspWifiApi {
         var lastError: Exception? = null
         repeat(2) { attempt ->
             try {
-                val useBind = attempt == 0
-                val response = executeRequest(context, request, useBind)
+                val httpClient = clientForEspNetwork(context)
+                val response = httpClient.newCall(request).execute()
                 val body = response.body?.string() ?: return@withContext Result.failure(Exception("Empty response"))
                 if (!response.isSuccessful) {
                     return@withContext Result.failure(Exception("HTTP ${response.code}: $body"))
@@ -131,7 +125,7 @@ object EspWifiApi {
                 .url("$ESP_AP_BASE_URL/api/wifi")
                 .post(body.toRequestBody("application/json".toMediaType()))
                 .build()
-            val response = executeRequest(context, request)
+            val response = clientForEspNetwork(context).newCall(request).execute()
             val responseBody = response.body?.string() ?: ""
             if (response.isSuccessful) {
                 val json = JSONObject(responseBody)

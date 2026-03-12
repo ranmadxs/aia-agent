@@ -325,7 +325,7 @@ class DeviceScanViewModel(
                 _uiState.update {
                     it.copy(
                         espWifiNetworks = data?.networks ?: emptyList(),
-                        espConnectedSsid = data?.connectedSsid?.takeIf { s -> s.isNotBlank() },
+                        espConnectedSsid = data?.connectedSsid?.trim()?.takeIf { s -> s.isNotBlank() },
                         wifiSourceEsp = true,
                         wifiNetworks = emptyList(),
                         wifiScanning = false,

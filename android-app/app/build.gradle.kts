@@ -7,12 +7,12 @@ android {
     namespace = "cl.tomi.aiaagent"
     compileSdk = 34
 
-    val appVersionName = "1.0.31"
+    val appVersionName = "1.0.36"
     defaultConfig {
         applicationId = "cl.tomi.aiaagent"
         minSdk = 26
         targetSdk = 34
-        versionCode = 32
+        versionCode = 37
         versionName = appVersionName
         setProperty("archivesBaseName", "aia-agent-v$appVersionName")
     }

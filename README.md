@@ -1,6 +1,14 @@
 # AIA Agent
-
+Users/ranmadxs/trabajos/aia-agent/android-app/app/build/outputs/apk/debug/
 Agentes inteligentes para automatización.
+{"connected_ssid":"Patitas","connected_rssi":-79,"networks":[{"ssid":"Patitas","rssi":-74,"encryption":"encrypted"}]}
+## App Android
+
+En `android-app/` hay una app Android (Kotlin + Jetpack Compose) que:
+- Muestra el nivel del estanque en tiempo real (polling cada 3s)
+- Permite ejecutar **Forzar Guardado** contra el Tomi Metric Collector
+
+Abrir `android-app/` en Android Studio y ejecutar. Ver [android-app/README.md](android-app/README.md).
 
 ## Comandos
 

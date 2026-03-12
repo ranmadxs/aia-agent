@@ -18,7 +18,11 @@ data class NetworkDeviceItem(
     val rawPayload: String? = null
 ) {
     val displayName: String
-        get() = name?.takeIf { it.isNotBlank() } ?: id
+        get() {
+            val base = name?.takeIf { it.isNotBlank() } ?: id
+            val ch = effectiveChannelId
+            return if (ch != null) "$ch - $base" else base
+        }
 
     /** device_id o id para Forzar Guardado */
     val effectiveDeviceId: String get() = deviceId?.takeIf { it.isNotBlank() } ?: id

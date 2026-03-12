@@ -38,8 +38,12 @@ MQTT_TOPIC_OUT = os.getenv('MQTT_TOPIC_OUT', 'yai-mqtt/YUS-0.2.8-COSTA/out')
 
 # Configuración del estanque
 PARCELA_NOMBRE = "Posada en el Bosque"
-ALTURA_SENSOR = 160  # cm desde el fondo
+ALTURA_SENSOR = int(os.getenv('ALTURA_SENSOR', '160'))
 CAPACIDAD_LITROS = 5000
+
+# Corrección sensor: no ve < 21cm, si distancia <= umbral restar corrección
+SENSOR_DIST_UMBRAL = int(os.getenv('SENSOR_DIST_UMBRAL', '20'))
+SENSOR_DIST_CORRECCION = int(os.getenv('SENSOR_DIST_CORRECCION', '15'))
 
 # Buffer para promedio móvil de 10 lecturas
 lecturas_buffer = deque(maxlen=10)
@@ -135,6 +139,10 @@ def guardar_en_mongodb(datos: dict):
 
 def calcular_nivel(distancia_sensor: float) -> dict:
     """Calcula litros y porcentaje basándose en la distancia del sensor."""
+    # Corrección: sensor no ve < 21cm, si distancia <= umbral restar corrección
+    if distancia_sensor <= SENSOR_DIST_UMBRAL:
+        distancia_sensor = max(0, distancia_sensor - SENSOR_DIST_CORRECCION)
+    
     altura_agua = ALTURA_SENSOR - distancia_sensor
     if altura_agua < 0:
         altura_agua = 0

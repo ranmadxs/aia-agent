@@ -69,9 +69,10 @@ private fun WifiNetworkCard(
                     if (isConnectedOnEsp) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            "Conectada en ESP",
+                            "Device conectado",
                             color = Color(0xFF22C55E),
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
@@ -513,13 +514,14 @@ fun DeviceScanScreen(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         if (uiState.wifiSourceEsp) {
-                            val connectedSsid = uiState.espConnectedSsid
+                            val connectedSsid = uiState.espConnectedSsid?.trim()?.takeIf { it.isNotBlank() }
                             items(uiState.espWifiNetworks) { net ->
+                                val isDeviceConnected = connectedSsid != null && net.ssid.trim().equals(connectedSsid, ignoreCase = true)
                                 WifiNetworkCard(
                                     ssid = net.ssid,
                                     rssi = net.rssi,
                                     onClick = { wifiConfigEspNetwork = net },
-                                    isConnectedOnEsp = connectedSsid != null && net.ssid == connectedSsid
+                                    isConnectedOnEsp = isDeviceConnected
                                 )
                             }
                         } else {
