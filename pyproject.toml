@@ -1,23 +1,20 @@
 [tool.poetry]
 name = "aia-agent"
-version = "0.1.0"
+version = "0.5.0"
 description = "Agentes inteligentes para automatización"
 authors = ["Edgar"]
 readme = "README.md"
-packages = [{include = "workers"}]
+packages = []
 
 [tool.poetry.dependencies]
-python = "^3.11"
-dash = "^2.9.3"
-plotly = "^5.15.0"
-paho-mqtt = "^1.6.1"
-pymongo = "^4.3.3"
-python-dotenv = "^1.0.0"
+python = "^3.12"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
 
 [tool.poetry.scripts]
-mqtt-worker = "workers.mqtt_worker:main"
-whatsapp-reader = "workers.whatsapp_reader:main"
-whatsapp-sender = "workers.whatsapp_sender:main"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # Imagen base para tests/CI
+  test:
+    build: .
+    container_name: aia-test
+    command: poetry run pytest -v
+
+  # Tests de integración Docker (requiere OPENROUTER_API_KEY)
+  test-docker:
+    build: .
+    container_name: aia-test-docker
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    command: poetry run pytest tests/test_docker.py -v
+
+  # Desarrollo con hot-reload (monta código local)
+  dev:
+    build: .
+    container_name: aia-dev
+    volumes:
+      - ./workers:/app/workers
+      - ./tests:/app/tests
+    command: tail -f /dev/null
