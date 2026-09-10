@@ -96,7 +96,7 @@ class TestDockerfileStructure:
         dockerfile = Path(__file__).parent.parent / 'Dockerfile'
         content = dockerfile.read_text()
 
-        poetry_install_line = 'python -m pip install poetry'
+        poetry_install_line = 'python3 -m pip install poetry'
         poetry_use_line = 'RUN poetry install'
 
         install_idx = content.find(poetry_install_line)

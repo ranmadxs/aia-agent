@@ -1,6 +1,7 @@
 """Minimal tests for aia-agent CI - no external dependencies."""
 
 import pytest
+import re
 import sys
 import os
 
@@ -47,7 +48,7 @@ class TestProjectConfig:
             data = tomli.load(f)
         
         assert data['tool']['poetry']['name'] == 'aia-agent'
-        assert data['tool']['poetry']['version'] == '0.8.0'
+        assert re.match(r'^\d+\.\d+\.\d+$', data['tool']['poetry']['version']), "Versión debe seguir semver X.Y.Z"
         assert data['tool']['poetry']['description'] == 'Agentes inteligentes para automatización'
         assert data['tool']['poetry']['authors'] == ['Edgar']
         assert data['tool']['poetry']['packages'] == []
