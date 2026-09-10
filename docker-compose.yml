@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mqtt-worker:
+    build: .
+    container_name: aia-mqtt-worker
+    env_file: .env
+    restart: unless-stopped
+    command: poetry run mqtt-worker
+
+  whatsapp-reader:
+    build: .
+    container_name: aia-whatsapp-reader
+    env_file: .env
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    command: poetry run whatsapp-reader
+
+  whatsapp-sender:
+    build: .
+    container_name: aia-whatsapp-sender
+    env_file: .env
+    restart: unless-stopped
+    ports:
+      - "5002:5002"
+    command: poetry run whatsapp-sender
+
+  # Opcional: para desarrollo con hot-reload
+  dev:
+    build: .
+    container_name: aia-dev
+    env_file: .env
+    volumes:
+      - ./workers:/app/workers
+    ports:
+      - "8050:8050"
+      - "5001:5001"
+      - "5002:5002"
+    command: tail -f /dev/null
