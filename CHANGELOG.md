@@ -8,7 +8,10 @@ El formato sigue [Conventional Commits](https://conventionalcommits.org/).
 
 ### Fixed
 - `Dockerfile`: Cambiado `python` por `python3` para compatibilidad con la imagen base `ghcr.io/nimbleflux/opencode-docker:latest`
+- `Dockerfile`: Agregada instalación de Python 3.12 (`apt-get`) y `POETRY_PYTHON=python3.12` para compatibilidad con `^3.12` en `pyproject.toml`
+- `Dockerfile`: Agregado `--break-system-packages` a `pip install` para compatibilidad con PEP 668
 - `.github/workflows/pr.yml`: Corregido `python` por `python3` en el paso de instalación de Poetry
+- `.github/workflows/pr.yml`: Agregado `--break-system-packages` a `pip install` para compatibilidad con PEP 668
 - `.github/workflows/docker-image.yml`: Reemplazados secrets inexistentes (`MONGODB_URI`, `MQTT_*`, `OPENROUTER_MODEL`) por los secrets reales disponibles (`OLLAMA_HOST`, `OPENROUTER_API_KEY`)
 - `tests/test_ci.py`: Versión de pyproject.toml verificada de forma genérica (regex semver) en lugar de hardcodeada
 - `tests/test_docker.py`: Corregido `python` por `python3` en la verificación de estructura del Dockerfile
