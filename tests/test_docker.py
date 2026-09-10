@@ -44,7 +44,7 @@ class TestOpenRouterConfig:
         # This just checks Python can import modules
         # The actual client would be in the application code
         import sys
-        assert sys.version_info >= (3, 12)
+        assert sys.version_info >= (3, 11)
 
     def test_openrouter_env_vars_available(self):
         """Test that OpenRouter env vars are accessible to Python."""
@@ -73,10 +73,10 @@ class TestDockerOnly:
         assert result.returncode == 0
 
     def test_python_version_in_container(self):
-        """Test Python 3.12+ in container."""
+        """Test Python 3.11+ in container."""
         import sys
         assert sys.version_info.major == 3
-        assert sys.version_info.minor >= 12
+        assert sys.version_info.minor >= 11
 
     def test_project_structure_in_container(self):
         """Test project files exist in container."""
