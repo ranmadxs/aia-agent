@@ -15,9 +15,9 @@ class TestBasicPython:
     """Basic Python functionality tests."""
 
     def test_python_version(self):
-        """Test Python version is 3.11+."""
+        """Test Python version is 3.12+."""
         assert sys.version_info.major == 3
-        assert sys.version_info.minor >= 11
+        assert sys.version_info.minor >= 12
 
     def test_poetry_available(self):
         """Test poetry is available."""
