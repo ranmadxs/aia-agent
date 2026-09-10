@@ -2,7 +2,7 @@ FROM ghcr.io/nimbleflux/opencode-docker:latest
 
 WORKDIR /app
 
-RUN python -m pip install --upgrade pip && python -m pip install poetry
+RUN python3 -m pip install --upgrade pip && python3 -m pip install poetry
 
 COPY pyproject.toml poetry.lock ./
 

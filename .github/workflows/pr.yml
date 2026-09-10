@@ -82,8 +82,8 @@ jobs:
 
       - name: Install Poetry
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install poetry
+          python3 -m pip install --upgrade pip
+          python3 -m pip install poetry
           poetry --version
 
       - name: Cache Poetry venv
