@@ -2,7 +2,7 @@ FROM ghcr.io/nimbleflux/opencode-docker:latest
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y python3.12 python3.12-venv python3.12-dev && rm -rf /var/lib/apt/lists/* && python3 -m pip install --upgrade pip --break-system-packages && python3 -m pip install poetry --break-system-packages
+RUN apt-get update && apt-get install -y python3.12 python3.12-venv python3.12-dev && rm -rf /var/lib/apt/lists/* && python3.12 -m pip install --upgrade pip --break-system-packages && python3.12 -m pip install poetry --break-system-packages
 
 COPY pyproject.toml poetry.lock ./
 
