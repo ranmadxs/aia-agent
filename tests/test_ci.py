@@ -47,7 +47,7 @@ class TestProjectConfig:
             data = tomli.load(f)
         
         assert data['tool']['poetry']['name'] == 'aia-agent'
-        assert data['tool']['poetry']['version'] == '0.5.0'
+        assert data['tool']['poetry']['version'] == '0.6.0'
         assert data['tool']['poetry']['description'] == 'Agentes inteligentes para automatización'
         assert data['tool']['poetry']['authors'] == ['Edgar']
         assert data['tool']['poetry']['packages'] == []

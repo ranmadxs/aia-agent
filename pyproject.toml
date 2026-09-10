@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aia-agent"
-version = "0.5.0"
+version = "0.6.0"
 description = "Agentes inteligentes para automatización"
 authors = ["Edgar"]
 readme = "README.md"
