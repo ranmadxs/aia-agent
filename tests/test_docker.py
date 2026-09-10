@@ -21,9 +21,11 @@ class TestDockerEnvironment:
         assert os.environ.get('PYTHONPATH') == '/app'
 
     def test_openrouter_model_default(self):
-        """Test OPENROUTER_MODEL has default value."""
+        """Test OPENROUTER_MODEL is set (empty by default, configured at deploy)."""
         model = os.environ.get('OPENROUTER_MODEL')
-        assert model == 'cohere/north-mini-code:free', f"Expected 'cohere/north-mini-code:free', got '{model}'"
+        # Should be defined (empty string by default in image, set at deploy time)
+        assert model is not None, "OPENROUTER_MODEL should be defined"
+        assert model == '', f"Expected empty string by default, got '{model}'"
 
     def test_openrouter_api_key_is_empty_by_default(self):
         """Test OPENROUTER_API_KEY is empty by default (set at runtime)."""
@@ -49,8 +51,10 @@ class TestOpenRouterConfig:
         model = os.getenv('OPENROUTER_MODEL')
         api_key = os.getenv('OPENROUTER_API_KEY')
         
-        assert model == 'cohere/north-mini-code:free'
-        assert api_key is not None  # Empty string is fine, None means not set
+        # Both should be defined (empty string by default in image, set at deploy time)
+        assert model is not None
+        assert model == ''
+        assert api_key is not None
 
 
 # Run only in Docker
