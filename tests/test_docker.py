@@ -86,3 +86,28 @@ class TestDockerOnly:
         assert Path('/app/tests').exists()
         assert Path('/app/tests/test_ci.py').exists()
         assert Path('/app/tests/test_docker.py').exists()
+
+
+class TestDockerfileStructure:
+    """Tests that validate the Dockerfile structure is correct."""
+
+    def test_poetry_install_before_use(self):
+        """Test that the Dockerfile installs poetry before using it."""
+        dockerfile = Path(__file__).parent.parent / 'Dockerfile'
+        content = dockerfile.read_text()
+
+        poetry_install_line = 'python -m pip install poetry'
+        poetry_use_line = 'RUN poetry install'
+
+        install_idx = content.find(poetry_install_line)
+        use_idx = content.find(poetry_use_line)
+
+        assert install_idx != -1, "Dockerfile debe tener una instrucción para instalar poetry"
+        assert use_idx != -1, "Dockerfile debe usar poetry install"
+        assert install_idx < use_idx, "poetry debe instalarse ANTES de ser usado en el Dockerfile"
+
+    def test_dockerfile_has_workdir(self):
+        """Test that Dockerfile sets WORKDIR."""
+        dockerfile = Path(__file__).parent.parent / 'Dockerfile'
+        content = dockerfile.read_text()
+        assert 'WORKDIR /app' in content
