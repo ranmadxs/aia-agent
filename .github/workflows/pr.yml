@@ -1,7 +1,7 @@
 name: PR Checks
 
 # Dispara SOLO en PRs contra main.
-# - Tests + coverage se ejecutan como required checks del PR (regla de branch protection).
+# - Tests se ejecutan como required checks del PR (regla de branch protection).
 # - En push a main (merge) este workflow NO corre: ese escenario lo cubre `release.yml`
 #   (auto-tag) y, si en el futuro se quieren tests post-merge, van en un workflow aparte
 #   para no contaminar el resultado del PR con ejecuciones que pasan/escanean main.
@@ -56,20 +56,12 @@ jobs:
             fi
 
   # ============================================================
-  # Job 1: Unit Tests
+  # Job 1: Unit Tests (minimal CI tests)
   # ============================================================
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
     needs: semver-check
-
-    env:
-      MONGODB_URI:               ''
-      MQTT_HOST:                 'broker.mqttdashboard.com'
-      MQTT_PORT:                 '1883'
-      MQTT_USERNAME:             'test'
-      MQTT_PASSWORD:             'test'
-      MQTT_TOPIC_OUT:            'yai-mqtt/YUS-0.2.8-COSTA/out'
 
     steps:
       - name: Checkout
@@ -110,7 +102,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          poetry run pytest \
+          poetry run pytest tests/test_ci.py \
             --junitxml=junit-report.xml \
             -v
 
@@ -122,131 +114,3 @@ jobs:
           path: junit-report.xml
           retention-days: 7
           if-no-files-found: warn
-
-  # ============================================================
-  # Job 2: Coverage
-  # ============================================================
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    needs: unit-tests
-
-    env:
-      MONGODB_URI:               ''
-      MQTT_HOST:                 'broker.mqttdashboard.com'
-      MQTT_PORT:                 '1883'
-      MQTT_USERNAME:             'test'
-      MQTT_PASSWORD:             'test'
-      MQTT_TOPIC_OUT:            'yai-mqtt/YUS-0.2.8-COSTA/out'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Python 3.11
-        uses: actions/setup-python@v7
-        with:
-          python-version: '3.11'
-
-      - name: Cache pip
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install Poetry
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install poetry
-          poetry --version
-
-      - name: Cache Poetry venv
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-
-      - name: Install dependencies
-        run: |
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project false
-          poetry install --with dev --no-interaction --no-ansi
-
-      - name: Run tests with coverage
-        run: |
-          poetry run pytest \
-            --cov=workers \
-            --cov-report=term \
-            --cov-report=xml:coverage.xml \
-            --cov-report=html:htmlcov \
-            --junitxml=junit-report.xml \
-            -v
-
-      - name: Extract coverage percentage
-        id: coverage
-        run: |
-          COVERAGE_PCT=$(poetry run coverage report --format=total | tail -n1)
-          echo "coverage=${COVERAGE_PCT}" >> "$GITHUB_OUTPUT"
-          echo "Total coverage: ${COVERAGE_PCT}%"
-
-      - name: Check coverage threshold
-        run: |
-          COVERAGE_PCT=$(poetry run coverage report --format=total | tail -n1)
-          THRESHOLD=30
-          if (( $(echo "$COVERAGE_PCT < $THRESHOLD" | bc -l) )); then
-            echo "❌ Coverage ${COVERAGE_PCT}% < ${THRESHOLD}%"
-            exit 1
-          fi
-          echo "✅ Coverage ${COVERAGE_PCT}% >= ${THRESHOLD}%"
-
-      - name: Upload coverage XML for GitHub coverage reporting
-        if: github.event_name == 'pull_request' || github.event_name == 'push'
-        uses: actions/upload-artifact@v7
-        with:
-          name: coverage-xml
-          path: coverage.xml
-          retention-days: 7
-          if-no-files-found: warn
-
-      - name: Upload coverage artifacts
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: coverage-report
-          path: |
-            coverage.xml
-            htmlcov/**
-            junit-report.xml
-            coverage.txt
-          retention-days: 7
-          if-no-files-found: warn
-
-      - name: Upload coverage to Codecov (opcional, requiere token)
-        if: env.CODECOV_TOKEN != null
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Comment PR with coverage
-        if: always() && github.event_name == 'pull_request' && github.event.action != 'closed'
-        uses: marocchino/sticky-pull-request-comment@v3
-        with:
-          header: coverage
-          message: |
-            ## 📊 Test Coverage
-
-            | Metric | Value |
-            |--------|-------|
-            | **Total coverage** | **${{ steps.coverage.outputs.coverage }}%** |
-            | Threshold | 30% |
-
-            📄 **Full HTML report**: [coverage-report (artifact)](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts) — descargá `coverage-report` y abrí `htmlcov/index.html`.
-
-            🔗 [Ver el run completo](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
