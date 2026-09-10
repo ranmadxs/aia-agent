@@ -2,6 +2,7 @@ name: Release Tag
 
 # Crea un tag anotado vX.Y.Z en cada push a main (= merge de PR).
 # Lee la versión de pyproject.toml. Idempotente: si el tag ya existe, lo salta.
+# Después de crear el tag, construye y publica la imagen Docker.
 
 on:
   push:
@@ -67,3 +68,25 @@ jobs:
           else
             echo "- Estado: ✅ creado y pusheado" >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  # ── Build de release: construye y publica la imagen en Docker Hub ──
+  build-and-publish:
+    name: Build and Push Docker Image
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set docker tag version
+        run: |
+          VERSION=$(grep -E '^version\s*=\s*"' pyproject.toml | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "RELEASE_VERSION=v${VERSION}" >> $GITHUB_ENV
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Build and push image
+        run: |
+          IMAGE="ranmadxs/aia-agent:${{ env.RELEASE_VERSION }}"
+          docker build -t "$IMAGE" .
+          docker tag "$IMAGE" ranmadxs/aia-agent:latest
+          docker push "$IMAGE"
+          docker push ranmadxs/aia-agent:latest
+          docker logout
