@@ -98,7 +98,7 @@ jobs:
         run: |
           poetry config virtualenvs.create true
           poetry config virtualenvs.in-project false
-          poetry install --with dev --no-interaction --no-ansi
+          poetry install --with dev --no-interaction --no-ansi --no-root
 
       - name: Run unit tests
         run: |
