@@ -82,6 +82,7 @@ jobs:
             -e OLLAMA_HOST="${{ secrets.OLLAMA_HOST }}" \
             -e OPENROUTER_API_KEY="${{ secrets.OPENROUTER_API_KEY }}" \
             -e OPENROUTER_MODEL="${{ secrets.OPENROUTER_MODEL }}" \
+            -e OPENCODE_SERVER_PASSWORD="${{ secrets.OPENCODE_SERVER_PASSWORD }}" \
             "$IMAGE"
           echo "Despliegue en nara completado (imagen: $IMAGE)"
 
