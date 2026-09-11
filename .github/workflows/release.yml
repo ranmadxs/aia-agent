@@ -95,7 +95,7 @@ jobs:
 
   # ── Despliegue continuo en nara (best-effort) ───────────────────────────────
   deploy-nara:
-    needs: build-and-publish
+    needs: [build-and-publish, release]
     runs-on: [self-hosted, nara]
     continue-on-error: true
     timeout-minutes: 10
