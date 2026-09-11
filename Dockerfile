@@ -15,3 +15,6 @@ ENV OPENROUTER_API_KEY=""
 ENV OPENROUTER_MODEL="inclusionai/ling-3.0-flash-fin:free"
 ENV BROWSER=none
 
+# Prevent opencode from crashing when trying to open browser via xdg-open
+RUN echo '#!/bin/sh' > /usr/local/bin/xdg-open && chmod +x /usr/local/bin/xdg-open
+
