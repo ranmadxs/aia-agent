@@ -12,5 +12,6 @@ ENV PYTHONPATH=/app
 ENV PATH="/root/.local/bin:${PATH}"
 # OpenRouter config (both passed at runtime via environment)
 ENV OPENROUTER_API_KEY=""
-ENV OPENROUTER_MODEL=""
+ENV OPENROUTER_MODEL="inclusionai/ling-3.0-flash-fin:free"
+ENV BROWSER=none
 
