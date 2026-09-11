@@ -81,6 +81,7 @@ jobs:
             -v /opt/aia-agent/logs:/app/logs \
             -e OLLAMA_HOST="${{ secrets.OLLAMA_HOST }}" \
             -e OPENROUTER_API_KEY="${{ secrets.OPENROUTER_API_KEY }}" \
+            -e OPENROUTER_MODEL="${{ secrets.OPENROUTER_MODEL }}" \
             "$IMAGE"
           echo "Despliegue en nara completado (imagen: $IMAGE)"
 

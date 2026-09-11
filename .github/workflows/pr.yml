@@ -1,27 +1,17 @@
 name: PR Checks
 
-# Dispara SOLO en PRs contra main.
-# - Tests se ejecutan como required checks del PR (regla de branch protection).
-# - En push a main (merge) este workflow NO corre: ese escenario lo cubre `release.yml`
-#   (auto-tag) y, si en el futuro se quieren tests post-merge, van en un workflow aparte
-#   para no contaminar el resultado del PR con ejecuciones que pasan/escanean main.
 on:
   pull_request:
     branches: [main]
 
-# Permisos: solo lectura por defecto. Se eleva a 'write' para comentar el PR.
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  # ============================================================
-  # Job 0: Semver Check (solo en PR; en push a main no se exige bump extra)
-  # ============================================================
   semver-check:
     name: Semver Check
     runs-on: ubuntu-latest
-    # Solo en PRs (no en push directo a main ni en re-run manual de un push).
     if: github.event_name == 'pull_request'
 
     permissions:
@@ -51,19 +41,28 @@ jobs:
               echo "  - feat     → minor  (X.Y+1.0)"
               echo "  - BREAKING → major  (X+1.0.0)"
               echo ""
-              echo "Editá pyproject.toml y bumpeá [project] version."
+              echo "Editá pyproject.toml y bumbeá [project] version."
               exit 1
             fi
 
-  # ============================================================
-  # Job 1: Unit Tests (minimal CI tests)
-  # ============================================================
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    needs: semver-check
+    if: github.event_name == 'pull_request'
 
     steps:
+      - name: Check if any job failed
+        if: always()
+        run: |
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs")
+          FAILED=$(echo "$RESPONSE" | python3 -c "import sys,json;[print(j['name']) for j in json.load(sys.stdin)['jobs'] if j['name']!='${{ github.job }}' and j['conclusion'] in ('failure','cancelled','skipped')][:1]")
+          if [ -n "$FAILED" ]; then
+            echo "❌ Job $FAILED failed, skipping"
+            exit 1
+          fi
+        shell: bash
+
       - name: Checkout
         uses: actions/checkout@v7
 
@@ -115,15 +114,24 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
-  # ============================================================
-  # Job 2: Docker Build Test (integration test - verify image builds)
-  # ============================================================
   docker-build-test:
     name: Docker Build Test
     runs-on: ubuntu-latest
-    needs: unit-tests
+    if: github.event_name == 'pull_request'
 
     steps:
+      - name: Check if any job failed
+        if: always()
+        run: |
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs")
+          FAILED=$(echo "$RESPONSE" | python3 -c "import sys,json;[print(j['name']) for j in json.load(sys.stdin)['jobs'] if j['name']!='${{ github.job }}' and j['conclusion'] in ('failure','cancelled','skipped')][:1]")
+          if [ -n "$FAILED" ]; then
+            echo "❌ Job $FAILED failed, skipping"
+            exit 1
+          fi
+        shell: bash
+
       - name: Checkout
         uses: actions/checkout@v7
 
