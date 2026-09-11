@@ -19,6 +19,25 @@ El formato sigue [Conventional Commits](https://conventionalcommits.org/).
 - `tests/test_docker.py`: Corregido `python` por `python3` en la verificación de estructura del Dockerfile
 - `tests/test_ci.py` y `tests/test_docker.py`: Versión mínima cambiada de 3.12 a 3.11
 
+## [0.8.2] - 2026-09-10
+
+### Fixed
+- `pyproject.toml`: Bump patch `0.8.1` → `0.8.2` para semver check
+- `poetry.lock`: Regenerado para `python = ">=3.11"`
+
+### Changed
+- `.github/workflows/pr.yml`: Python 3.11 setup + nuevo job `docker-build-test` (integración)
+- `tests/test_ci.py`, `tests/test_docker.py`: Versión mínima 3.11
+
+## [0.8.3] - 2026-09-10
+
+### Fixed
+- `.github/workflows/release.yml`: Usuario Docker Hub `ranmadxs` → `keitarodxs`
+- `.github/workflows/docker-image.yml`: Usuario Docker Hub `ranmadxs` → `keitarodxs` (build, push, deploy)
+
+### Changed
+- Bump patch `0.8.2` → `0.8.3`
+
 ## [0.8.0] - 2026-09-10
 
 ### Added
