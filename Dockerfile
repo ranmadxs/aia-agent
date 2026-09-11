@@ -14,4 +14,3 @@ ENV PATH="/root/.local/bin:${PATH}"
 ENV OPENROUTER_API_KEY=""
 ENV OPENROUTER_MODEL=""
 
-CMD ["poetry", "run", "pytest"]
