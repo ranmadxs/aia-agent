@@ -19,6 +19,8 @@ services:
   dev:
     build: .
     container_name: aia-dev
+    ports:
+      - "4000:4000"
     volumes:
       - ./workers:/app/workers
       - ./tests:/app/tests
