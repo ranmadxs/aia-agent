@@ -56,14 +56,7 @@ jobs:
         run: |
           RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs")
-          FAILED=$(echo "$RESPONSE" | python3 -c "
-import sys, json
-jobs = json.load(sys.stdin)['jobs']
-for j in jobs:
-    if j['name'] != '${{ github.job }}' and j['conclusion'] in ('failure', 'cancelled', 'skipped'):
-        print(j['name'])
-        break
-")
+          FAILED=$(echo "$RESPONSE" | python3 -c "import sys,json;[print(j['name']) for j in json.load(sys.stdin)['jobs'] if j['name']!='${{ github.job }}' and j['conclusion'] in ('failure','cancelled','skipped')][:1]")
           if [ -n "$FAILED" ]; then
             echo "❌ Job $FAILED failed, skipping"
             exit 1
@@ -132,14 +125,7 @@ for j in jobs:
         run: |
           RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs")
-          FAILED=$(echo "$RESPONSE" | python3 -c "
-import sys, json
-jobs = json.load(sys.stdin)['jobs']
-for j in jobs:
-    if j['name'] != '${{ github.job }}' and j['conclusion'] in ('failure', 'cancelled', 'skipped'):
-        print(j['name'])
-        break
-")
+          FAILED=$(echo "$RESPONSE" | python3 -c "import sys,json;[print(j['name']) for j in json.load(sys.stdin)['jobs'] if j['name']!='${{ github.job }}' and j['conclusion'] in ('failure','cancelled','skipped')][:1]")
           if [ -n "$FAILED" ]; then
             echo "❌ Job $FAILED failed, skipping"
             exit 1
