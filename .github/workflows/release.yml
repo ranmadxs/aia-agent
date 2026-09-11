@@ -15,6 +15,8 @@ jobs:
   release:
     name: Create v* tag from pyproject.toml
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
 
     steps:
       - name: Checkout
@@ -100,7 +102,7 @@ jobs:
     steps:
       - name: Desplegar con docker run en nara
         env:
-          AIA_AGENT_TAG: ${{ github.ref_name }}
+          AIA_AGENT_TAG: ${{ needs.release.outputs.tag }}
         run: |
           set -e
           TAG="${AIA_AGENT_TAG}"
@@ -119,6 +121,7 @@ jobs:
   # ── Verificación post‑deploy en nara ──────────────────────────────────
   verify-nara:
     needs: deploy-nara
+    if: ${{ success() }}
     runs-on: [self-hosted, nara]
     steps:
       - name: Verificar contenedor en nara
