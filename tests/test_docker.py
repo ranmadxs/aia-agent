@@ -21,10 +21,10 @@ class TestDockerEnvironment:
         assert os.environ.get('PYTHONPATH') == '/app'
 
     def test_openrouter_model_default(self):
-        """Test OPENROUTER_MODEL defaults to inclusionai/ling-3.0-flash-fin:free."""
+        """Test OPENROUTER_MODEL defaults to openrouter/inclusionai/ling-3.0-flash-fin:free."""
         model = os.environ.get('OPENROUTER_MODEL')
         assert model is not None, "OPENROUTER_MODEL should be defined"
-        assert model == 'inclusionai/ling-3.0-flash-fin:free', f"Expected default model, got '{model}'"
+        assert model == 'openrouter/inclusionai/ling-3.0-flash-fin:free', f"Expected default model, got '{model}'"
 
     def test_openrouter_api_key_is_empty_by_default(self):
         """Test OPENROUTER_API_KEY is empty by default (set at runtime)."""
@@ -52,7 +52,7 @@ class TestOpenRouterConfig:
 
         # Default model set in image, API key empty by default
         assert model is not None
-        assert model == 'inclusionai/ling-3.0-flash-fin:free'
+        assert model == 'openrouter/inclusionai/ling-3.0-flash-fin:free'
         assert api_key is not None
 
 
