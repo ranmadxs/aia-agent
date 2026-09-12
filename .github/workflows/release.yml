@@ -112,6 +112,7 @@ jobs:
           docker rm aia-agent 2>/dev/null || true
           docker run -d --name aia-agent --restart unless-stopped \
             --network=host \
+            -p 4000:4000 \
             -v /opt/aia-agent/logs:/app/logs \
             -e OLLAMA_HOST="${{ secrets.OLLAMA_HOST }}" \
             -e OPENROUTER_API_KEY="${{ secrets.OPENROUTER_API_KEY }}" \
